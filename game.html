@@ -9,8 +9,9 @@
         var ballSpeedY = 4;
 
         var leftPaddleY = 250;
+        var rightPaddleY = 250;
         const PADDLE_HEIGHT = 100;
-        const PADDLE_WIDTH = 10;
+        const PADDLE_THICKNESS = 10;
 
         function calculateMouse(evt) {
             var rect = canvas.getBoundingClientRect();
@@ -37,12 +38,32 @@
                 })
         }
 
+        function ballReset() {
+            ballSpeedX = -ballSpeedX;
+            ballX = canvas.width/2;
+            ballX = canvas.height/2;
+        }
+
         function moveEverything() {
             ballX = ballX + ballSpeedX;
             ballY = ballY + ballSpeedY;
-            if (ballX > canvas.width || ballX < 0) {
-                ballSpeedX = -ballSpeedX;
+            // left bound
+            if (ballX < 0) {
+                if (ballY > leftPaddleY && ballY < (leftPaddleY + PADDLE_HEIGHT)) {
+                    ballSpeedX = -ballSpeedX;
+                } else {
+                    ballReset();
+                }
             }
+            // right bound
+            if (ballX > canvas.width) {
+                if (ballY > rightPaddleY && ballY < (rightPaddleY + PADDLE_HEIGHT)) {
+                    ballSpeedX = -ballSpeedX;
+                } else {
+                    ballReset(); 
+                }
+            }
+            // vertical bounds just reflect off
             if (ballY > canvas.height || ballY < 0) {
                 ballSpeedY = -ballSpeedY;
             }
@@ -53,10 +74,10 @@
             colorRect(0, 0, canvas.width, canvas.height, 'black');
             
             // left player paddle
-            colorRect(0, leftPaddleY, PADDLE_WIDTH, PADDLE_HEIGHT, 'white');
+            colorRect(0, leftPaddleY, PADDLE_THICKNESS, PADDLE_HEIGHT, 'white');
 
             // right player paddle
-            colorRect(canvas.width - PADDLE_WIDTH, canvas.height/2 - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT, 'white');
+            colorRect(canvas.width - PADDLE_THICKNESS, rightPaddleY, PADDLE_THICKNESS, PADDLE_HEIGHT, 'white');
             
             // ball
             colorCircle(ballX, ballY, 10, 'white');
