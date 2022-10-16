@@ -7,7 +7,21 @@
         var ballY = 50;
         var ballSpeedX = 10;
         var ballSpeedY = 4;
-        var paddleWidth = 10;
+
+        var leftPaddleY = 250;
+        const PADDLE_HEIGHT = 100;
+        const PADDLE_WIDTH = 10;
+
+        function calculateMouse(evt) {
+            var rect = canvas.getBoundingClientRect();
+            var root = document.documentElement;
+            var mouseX = evt.clientX - rect.left - root.scrollLeft;
+            var mouseY = evt.clientY - rect.top - root.scrollTop;
+            return {
+                x:mouseX,
+                y:mouseY
+            };
+        }
 
         window.onload = () => {
             canvas = document.getElementById('gameCanvas');
@@ -15,6 +29,12 @@
             
             var framesPerSecond = 30;
             setInterval(() => {moveEverything(), drawEverything()}, 1000/framesPerSecond);
+            
+            canvas.addEventListener('mousemove', 
+                (evt) => {
+                    var mousePos = calculateMouse(evt);
+                    leftPaddleY = mousePos.y - (PADDLE_HEIGHT / 2); // align mouse with paddle center
+                })
         }
 
         function moveEverything() {
@@ -33,10 +53,10 @@
             colorRect(0, 0, canvas.width, canvas.height, 'black');
             
             // left player paddle
-            colorRect(0, canvas.height/2 - 50, paddleWidth, 100, 'white');
+            colorRect(0, leftPaddleY, PADDLE_WIDTH, PADDLE_HEIGHT, 'white');
 
             // right player paddle
-            colorRect(canvas.width - paddleWidth, canvas.height/2 - 50, paddleWidth, 100, 'white');
+            colorRect(canvas.width - PADDLE_WIDTH, canvas.height/2 - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT, 'white');
             
             // ball
             colorCircle(ballX, ballY, 10, 'white');
