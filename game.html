@@ -13,6 +13,9 @@
         const PADDLE_HEIGHT = 100;
         const PADDLE_THICKNESS = 10;
 
+        var scoreLeft = 0;
+        var scoreRight = 0;
+
         function calculateMouse(evt) {
             var rect = canvas.getBoundingClientRect();
             var root = document.documentElement;
@@ -34,7 +37,11 @@
             canvas.addEventListener('mousemove', 
                 (evt) => {
                     var mousePos = calculateMouse(evt);
-                    leftPaddleY = mousePos.y - (PADDLE_HEIGHT / 2); // align mouse with paddle center
+                    if (mousePos.x < canvas.width/2) {
+                        leftPaddleY = mousePos.y - (PADDLE_HEIGHT / 2); // align mouse with paddle center
+                    } else {
+                        rightPaddleY = mousePos.y - (PADDLE_HEIGHT / 2); // align mouse with paddle center
+                    }
                 })
         }
 
@@ -42,6 +49,19 @@
             ballSpeedX = -ballSpeedX;
             ballX = canvas.width/2;
             ballX = canvas.height/2;
+        }
+
+        function leftScoreReset() {
+            scoreLeft = 0;
+        }
+        function increaseLeftScoreByOne(){
+            scoreLeft = scoreLeft + 1;
+        }
+        function rightScoreReset() {
+            scoreRight = 0;
+        }
+        function increaseRightScoreByOne(){
+            scoreRight = scoreRight + 1;
         }
 
         function moveEverything() {
@@ -52,6 +72,7 @@
                 if (ballY > leftPaddleY && ballY < (leftPaddleY + PADDLE_HEIGHT)) {
                     ballSpeedX = -ballSpeedX;
                 } else {
+                    increaseRightScoreByOne();
                     ballReset();
                 }
             }
@@ -60,6 +81,7 @@
                 if (ballY > rightPaddleY && ballY < (rightPaddleY + PADDLE_HEIGHT)) {
                     ballSpeedX = -ballSpeedX;
                 } else {
+                    increaseLeftScoreByOne();
                     ballReset(); 
                 }
             }
@@ -81,6 +103,16 @@
             
             // ball
             colorCircle(ballX, ballY, 10, 'white');
+
+            drawScore(scoreLeft, canvas.width / 4, canvas.height / 2, 'white'); // left score
+            drawScore(scoreRight, canvas.width / 4 + (canvas.width / 2.5), canvas.height / 2, 'white'); // right score
+
+        }
+
+        function drawScore(score, leftX, topY, drawColor) {
+            canvasContext.fillStyle = drawColor;
+            canvasContext.font = "150px Roboto";
+            canvasContext.fillText(score, leftX, topY);
         }
 
         function colorCircle(centerX, centerY, radius, drawColor) {
@@ -93,7 +125,7 @@
 
         function colorRect(leftX, topY, width, height, drawColor) {
             canvasContext.fillStyle = drawColor;
-            canvasContext.fillRect(leftX, topY, width, height)
+            canvasContext.fillRect(leftX, topY, width, height);
         }
     </script>
 </html>
